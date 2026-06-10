@@ -37,6 +37,13 @@ docker run --rm -p 8080:80 osi-viz
 # then open http://localhost:8080
 ```
 
+### Continuous builds
+
+`.github/workflows/docker-build.yml` builds the image on every push and pull
+request. On the default branch (and version tags) it also publishes the image to
+the GitHub Container Registry at `ghcr.io/<owner>/osi-viz`, tagged with the branch
+name, short commit SHA, semver tag, and `latest`.
+
 ## How it works
 
 - `src/data/layers.js` — the single source of truth: every layer, its header/trailer
