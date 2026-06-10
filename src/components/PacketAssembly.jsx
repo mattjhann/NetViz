@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { LayoutGroup, motion } from 'framer-motion';
 import { LAYERS } from '../data/layers.js';
 import PacketBlock from './PacketBlock.jsx';
 
@@ -18,6 +18,16 @@ const makeField = (layer, field, kind) => ({
 });
 
 export default function PacketAssembly({ activeIndex, hoveredField, onInspect, reducedMotion }) {
+  const sharedTransition = reducedMotion
+    ? { duration: 0.2 }
+    : { type: 'spring', stiffness: 220, damping: 30 };
+
+  // Stable layout identity for a persistent piece. Across layer changes Framer
+  // Motion animates each piece from its old box to its new (nested) box, so the
+  // previous data slides into place inside the next layer instead of re-mounting.
+  const layoutProps = (id) =>
+    reducedMotion ? {} : { layoutId: id, transition: sharedTransition };
+
   // Recursively render the encapsulation: outermost box = current layer,
   // each inner box = the PDU handed down from the layer above.
   function renderNode(index) {
@@ -28,7 +38,8 @@ export default function PacketAssembly({ activeIndex, hoveredField, onInspect, r
     if (index === 0) {
       return (
         <PacketBlock
-          key="app-data"
+          key="data"
+          layoutId="data"
           variant="data"
           accentColor={layer.accentColor}
           label={isCurrent ? layer.payload.label : 'Data'}
@@ -41,10 +52,12 @@ export default function PacketAssembly({ activeIndex, hoveredField, onInspect, r
     }
 
     // Physical layer: the whole frame is serialized into a bit/signal stream.
+    // It reuses the Data Link box's layout id, so the frame morphs into the bits.
     if (layer.id === 'physical') {
       return (
         <PacketBlock
           key="bits"
+          layoutId="box-datalink"
           variant="bits"
           accentColor={layer.accentColor}
           label={layer.payload.label}
@@ -61,8 +74,8 @@ export default function PacketAssembly({ activeIndex, hoveredField, onInspect, r
 
     return (
       <motion.div
-        key={`pdu-${layer.id}`}
-        layout={!reducedMotion}
+        key={`box-${layer.id}`}
+        {...layoutProps(`box-${layer.id}`)}
         className={`pdu ${isCurrent ? 'is-current' : 'is-nested'}`}
         style={{ '--block-accent': layer.accentColor }}
       >
@@ -71,7 +84,11 @@ export default function PacketAssembly({ activeIndex, hoveredField, onInspect, r
         <div className="pdu__row">
           {/* Header */}
           {isCurrent ? (
-            <div className="header-group" aria-label={`${layer.protocol} header`}>
+            <motion.div
+              {...layoutProps(`hdr-${layer.id}`)}
+              className="header-group"
+              aria-label={`${layer.protocol} header`}
+            >
               <span className="header-group__title">{layer.protocol} Header</span>
               <div className="header-group__fields">
                 {layer.headerFields.map((f) => {
@@ -93,9 +110,10 @@ export default function PacketAssembly({ activeIndex, hoveredField, onInspect, r
                   );
                 })}
               </div>
-            </div>
+            </motion.div>
           ) : (
             <PacketBlock
+              layoutId={`hdr-${layer.id}`}
               variant="header"
               accentColor={layer.accentColor}
               label={`${abbrev(layer)} Hdr`}
@@ -110,7 +128,11 @@ export default function PacketAssembly({ activeIndex, hoveredField, onInspect, r
           {/* Trailer (Data Link only) */}
           {layer.trailerFields.length > 0 &&
             (isCurrent ? (
-              <div className="header-group header-group--trailer" aria-label={`${layer.protocol} trailer`}>
+              <motion.div
+                {...layoutProps(`tlr-${layer.id}`)}
+                className="header-group header-group--trailer"
+                aria-label={`${layer.protocol} trailer`}
+              >
                 <span className="header-group__title">Trailer</span>
                 <div className="header-group__fields">
                   {layer.trailerFields.map((f) => {
@@ -132,9 +154,16 @@ export default function PacketAssembly({ activeIndex, hoveredField, onInspect, r
                     );
                   })}
                 </div>
-              </div>
+              </motion.div>
             ) : (
-              <PacketBlock variant="trailer" accentColor={layer.accentColor} label="FCS" muted reducedMotion={reducedMotion} />
+              <PacketBlock
+                layoutId={`tlr-${layer.id}`}
+                variant="trailer"
+                accentColor={layer.accentColor}
+                label="FCS"
+                muted
+                reducedMotion={reducedMotion}
+              />
             ))}
         </div>
       </motion.div>
@@ -143,18 +172,9 @@ export default function PacketAssembly({ activeIndex, hoveredField, onInspect, r
 
   return (
     <div className="assembly">
-      <AnimatePresence mode="popLayout">
-        <motion.div
-          key={LAYERS[activeIndex].id}
-          className="assembly__inner"
-          initial={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.98 }}
-          transition={{ duration: reducedMotion ? 0.2 : 0.4, ease: 'easeOut' }}
-        >
-          {renderNode(activeIndex)}
-        </motion.div>
-      </AnimatePresence>
+      <LayoutGroup>
+        <div className="assembly__inner">{renderNode(activeIndex)}</div>
+      </LayoutGroup>
     </div>
   );
 }
