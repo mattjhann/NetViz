@@ -26,6 +26,17 @@ npm run build    # production build into dist/
 npm run preview  # preview the production build
 ```
 
+## Run with Docker
+
+A multi-stage `Dockerfile` builds the static site with Node and serves it with
+nginx, so it runs on any machine with Docker — no local Node install needed.
+
+```bash
+docker build -t osi-viz .
+docker run --rm -p 8080:80 osi-viz
+# then open http://localhost:8080
+```
+
 ## How it works
 
 - `src/data/layers.js` — the single source of truth: every layer, its header/trailer
