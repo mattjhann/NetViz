@@ -1,0 +1,600 @@
+/* ===========================================================================
+   OSI-Viz — scroll-driven network encapsulation visualizer
+   ========================================================================= */
+
+:root {
+  --bg: #0a0b14;
+  --bg-soft: #11131f;
+  --panel: rgba(255, 255, 255, 0.04);
+  --panel-border: rgba(255, 255, 255, 0.1);
+  --text: #eef0f7;
+  --text-dim: #a7adc4;
+  --text-faint: #707892;
+  --radius: 16px;
+  --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  --sans: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+.app {
+  position: relative;
+}
+
+/* Ambient gradient backdrop ------------------------------------------------ */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 50% at 80% 0%, rgba(124, 140, 255, 0.16), transparent 60%),
+    radial-gradient(55% 45% at 10% 100%, rgba(255, 107, 139, 0.12), transparent 60%),
+    linear-gradient(180deg, var(--bg), var(--bg-soft));
+}
+
+.app > *:not(.backdrop) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ===========================================================================
+   Hero
+   ========================================================================= */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 6vh 6vw;
+  gap: 1.4rem;
+}
+
+.hero__kicker {
+  font-family: var(--mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.hero__title {
+  font-size: clamp(2.8rem, 8vw, 6rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+
+.hero__title-accent {
+  background: linear-gradient(120deg, #7c8cff, #42d6a4 55%, #ffb454);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero__lede {
+  max-width: 60ch;
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+.hero__cue {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-faint);
+}
+
+.hero__cue-label {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.hero__cue-arrow {
+  font-size: 1.4rem;
+  display: inline-block;
+}
+
+/* ===========================================================================
+   Encapsulation stage (sticky / pinned)
+   ========================================================================= */
+.encap-track {
+  position: relative;
+}
+
+.encap-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.encap-stage__inner {
+  width: min(1100px, 92vw);
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(1rem, 2.2vh, 2rem);
+  padding: 5vh 0 4vh;
+}
+
+/* --- Layer caption -------------------------------------------------------- */
+.caption {
+  text-align: center;
+}
+
+.caption__eyebrow {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 0.5rem;
+}
+
+.caption__layernum {
+  color: var(--block-accent);
+}
+
+.caption__title {
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.caption__protocol {
+  font-family: var(--mono);
+  font-size: 0.5em;
+  font-weight: 600;
+  padding: 0.25em 0.6em;
+  border-radius: 999px;
+  color: var(--block-accent);
+  background: color-mix(in srgb, var(--block-accent) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--block-accent) 40%, transparent);
+}
+
+.caption__pdu {
+  margin-top: 0.35rem;
+  color: var(--text-dim);
+  font-size: 1rem;
+}
+
+.caption__pdu strong {
+  color: var(--block-accent);
+}
+
+.caption__desc {
+  margin: 0.7rem auto 0;
+  max-width: 70ch;
+  color: var(--text-dim);
+  line-height: 1.55;
+  font-size: clamp(0.92rem, 1.4vw, 1.02rem);
+}
+
+.caption__hint {
+  margin-top: 0.4rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--text-faint);
+}
+
+/* ===========================================================================
+   The packet assembly (concentric encapsulation boxes)
+   ========================================================================= */
+.encap-canvas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  width: 100%;
+  overflow: auto;
+  padding: 0.5rem;
+}
+
+.assembly {
+  margin: auto;
+}
+
+.assembly__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* A Protocol Data Unit box — wraps a header (+ trailer) around a payload. */
+.pdu {
+  position: relative;
+  display: inline-flex;
+  padding: clamp(1.6rem, 3vh, 2.4rem) clamp(0.7rem, 1.4vw, 1.1rem) clamp(0.7rem, 1.4vw, 1.1rem);
+  border-radius: 18px;
+  border: 1.5px solid color-mix(in srgb, var(--block-accent) 55%, transparent);
+}
+
+.pdu.is-current {
+  border: 2px solid var(--block-accent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--block-accent) 40%, transparent),
+    0 0 40px color-mix(in srgb, var(--block-accent) 28%, transparent);
+  background: color-mix(in srgb, var(--block-accent) 7%, transparent);
+}
+
+.pdu.is-nested {
+  border-style: dashed;
+  opacity: 0.92;
+}
+
+.pdu__tag {
+  position: absolute;
+  top: -0.85rem;
+  left: 0.9rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.18em 0.6em;
+  border-radius: 999px;
+  color: var(--bg);
+  background: var(--block-accent);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pdu.is-nested .pdu__tag {
+  color: var(--block-accent);
+  background: color-mix(in srgb, var(--block-accent) 16%, var(--bg));
+  border: 1px solid color-mix(in srgb, var(--block-accent) 45%, transparent);
+}
+
+.pdu__row {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+.pdu__payload {
+  display: flex;
+  align-items: center;
+}
+
+/* --- Header / trailer field groups --------------------------------------- */
+.header-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.header-group__title {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  text-align: center;
+}
+
+.header-group__fields {
+  display: flex;
+  gap: 0.3rem;
+}
+
+/* ===========================================================================
+   Blocks (individual rectangles)
+   ========================================================================= */
+.block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.6rem 0.7rem;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--block-accent) 45%, transparent);
+  background: color-mix(in srgb, var(--block-accent) 12%, var(--bg-soft));
+  color: var(--text);
+  min-width: 62px;
+  text-align: center;
+  font-family: var(--sans);
+}
+
+.block__label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.block__value {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.block.is-highlighted {
+  border-color: var(--block-accent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--block-accent) 35%, transparent);
+}
+
+.block.is-muted {
+  opacity: 0.6;
+  border-style: dashed;
+  background: color-mix(in srgb, var(--block-accent) 7%, var(--bg-soft));
+}
+
+/* Interactive header / trailer fields */
+.block.is-interactive {
+  cursor: help;
+  appearance: none;
+  font: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.block.is-interactive:hover,
+.block.is-interactive:focus-visible,
+.block.is-interactive.is-hovered {
+  transform: translateY(-3px);
+  background: color-mix(in srgb, var(--block-accent) 24%, var(--bg-soft));
+  box-shadow: 0 0 22px color-mix(in srgb, var(--block-accent) 50%, transparent);
+  outline: none;
+}
+
+.block.is-interactive:focus-visible {
+  outline: 2px solid var(--block-accent);
+  outline-offset: 2px;
+}
+
+/* Payload / data block */
+.block--data {
+  min-width: 120px;
+  background: color-mix(in srgb, var(--block-accent) 16%, var(--bg-soft));
+}
+
+/* Physical-layer bit stream */
+.block--bits {
+  min-width: min(560px, 78vw);
+  font-family: var(--mono);
+  letter-spacing: 0.12em;
+  padding: 1.3rem 1.6rem;
+}
+
+.block--bits .block__value {
+  font-size: 0.84rem;
+  letter-spacing: 0.22em;
+  word-break: break-all;
+  white-space: normal;
+}
+
+/* ===========================================================================
+   Field detail panel (under the rectangle)
+   ========================================================================= */
+.detail {
+  min-height: 92px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.detail__card {
+  width: min(720px, 92%);
+  border-radius: 14px;
+  padding: 0.9rem 1.2rem;
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  backdrop-filter: blur(6px);
+}
+
+.detail__card.is-active {
+  border-color: color-mix(in srgb, var(--block-accent) 55%, transparent);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+.detail__card.is-prompt {
+  text-align: center;
+  border-style: dashed;
+}
+
+.detail__head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+
+.detail__name {
+  font-weight: 700;
+  font-size: 1.02rem;
+  color: var(--block-accent);
+}
+
+.detail__value {
+  font-family: var(--mono);
+  font-size: 0.84rem;
+  color: var(--text);
+  padding: 0.1em 0.5em;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--block-accent) 14%, transparent);
+}
+
+.detail__tag {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.detail__text {
+  color: var(--text-dim);
+  line-height: 1.55;
+  font-size: 0.95rem;
+}
+
+/* ===========================================================================
+   Progress rail
+   ========================================================================= */
+.rail {
+  position: fixed;
+  left: max(1.4rem, 3vw);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+}
+
+.rail__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.05rem;
+}
+
+.rail__item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+
+.rail__item.is-active,
+.rail__item.is-done {
+  opacity: 1;
+}
+
+.rail__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 2px solid var(--block-accent);
+  background: transparent;
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.rail__item.is-done .rail__dot {
+  background: var(--block-accent);
+}
+
+.rail__item.is-active .rail__dot {
+  background: var(--block-accent);
+  transform: scale(1.4);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--block-accent) 60%, transparent);
+}
+
+.rail__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.rail__layer {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.rail__pdu {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text-faint);
+}
+
+.rail__item.is-active .rail__pdu {
+  color: var(--block-accent);
+}
+
+/* ===========================================================================
+   Footer
+   ========================================================================= */
+.footer {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1rem;
+  padding: 8vh 6vw;
+}
+
+.footer__recap {
+  max-width: 60ch;
+  font-size: clamp(1.05rem, 2vw, 1.4rem);
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.footer__credit {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* ===========================================================================
+   Responsive
+   ========================================================================= */
+@media (max-width: 860px) {
+  .rail {
+    display: none;
+  }
+
+  .header-group__title {
+    font-size: 0.6rem;
+  }
+
+  .block {
+    min-width: 54px;
+    padding: 0.5rem 0.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
