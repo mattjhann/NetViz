@@ -1,0 +1,7 @@
+services:
+  osi-viz:
+    image: ghcr.io/mattjhann/osi-viz:sha-d1c25c3
+    container_name: osi-viz
+    ports:
+      - "5656:80"
+    restart: unless-stopped
