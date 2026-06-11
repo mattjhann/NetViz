@@ -1,5 +1,6 @@
 import EncapsulationPage from './EncapsulationPage.jsx';
 import TlsHandshakePage from './TlsHandshakePage.jsx';
+import DnsResolutionPage from './DnsResolutionPage.jsx';
 
 // ===========================================================================
 // PAGE REGISTRY — the single place that defines every visualization.
@@ -29,6 +30,14 @@ const LockIcon = () => (
   </svg>
 );
 
+const DnsIcon = () => (
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+    <circle cx="12" cy="12" r="9" />
+    <path d="M3 12h18" />
+    <path d="M12 3c2.7 2.4 4.2 5.7 4.2 9S14.7 18.6 12 21c-2.7-2.4-4.2-5.7-4.2-9S9.3 5.4 12 3Z" />
+  </svg>
+);
+
 export const PAGES = [
   {
     id: 'encapsulation',
@@ -47,6 +56,15 @@ export const PAGES = [
     accent: '#42d6a4',
     icon: <LockIcon />,
     Component: TlsHandshakePage,
+  },
+  {
+    id: 'dns',
+    path: '/dns',
+    title: 'DNS Resolution',
+    tagline: 'Follow a lookup as it walks the hierarchy: root → TLD → authoritative.',
+    accent: '#ffb454',
+    icon: <DnsIcon />,
+    Component: DnsResolutionPage,
   },
 ];
 
