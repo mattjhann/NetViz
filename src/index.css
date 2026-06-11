@@ -941,6 +941,16 @@ p {
 /* ===========================================================================
    Responsive
    ========================================================================= */
+/* Reserve a left gutter for the fixed progress rail so centered stage content
+   (especially the TLS lanes, which reach the container edges) never sits under
+   it. The rail is only shown above 860px. */
+@media (min-width: 861px) {
+  .encap-stage__inner {
+    padding-left: clamp(196px, 15vw, 240px);
+    padding-right: clamp(1rem, 3vw, 2.5rem);
+  }
+}
+
 @media (max-width: 860px) {
   .rail {
     display: none;
