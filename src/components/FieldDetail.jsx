@@ -1,11 +1,12 @@
 import { AnimatePresence, motion } from 'framer-motion';
 
 // The panel directly under the data rectangle. When the user hovers (or
-// keyboard-focuses) a header/trailer field of the current layer, it explains
-// what that field does. Otherwise it shows a gentle prompt.
-export default function FieldDetail({ field, layer, reducedMotion }) {
+// keyboard-focuses) a field, it explains what that field does. Otherwise it
+// shows a gentle prompt. Generic across every visualization — pass the active
+// `field` (or null) plus a fallback `prompt` string and an `accentColor`.
+export default function FieldDetail({ field, prompt, accentColor, reducedMotion }) {
   const hasField = Boolean(field);
-  const accent = field?.accentColor ?? layer.accentColor;
+  const accent = field?.accentColor ?? accentColor;
 
   return (
     <div className="detail" style={{ '--block-accent': accent }} aria-live="polite">
@@ -21,10 +22,14 @@ export default function FieldDetail({ field, layer, reducedMotion }) {
           >
             <div className="detail__head">
               <span className="detail__name">{field.name}</span>
-              <span className="detail__value">{field.exampleValue}</span>
-              <span className="detail__tag">
-                {field.protocol} {field.kind}
-              </span>
+              {field.exampleValue != null && (
+                <span className="detail__value">{field.exampleValue}</span>
+              )}
+              {(field.protocol || field.kind) && (
+                <span className="detail__tag">
+                  {[field.protocol, field.kind].filter(Boolean).join(' ')}
+                </span>
+              )}
             </div>
             <p className="detail__text">{field.detail}</p>
           </motion.div>
@@ -37,13 +42,7 @@ export default function FieldDetail({ field, layer, reducedMotion }) {
             exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
             transition={{ duration: reducedMotion ? 0.15 : 0.25, ease: 'easeOut' }}
           >
-            <p className="detail__text">
-              {layer.headerFields.length > 0 || layer.trailerFields.length > 0 ? (
-                <>Hover or tab through a field above to learn what it does.</>
-              ) : (
-                <>{layer.scrollHint}</>
-              )}
-            </p>
+            <p className="detail__text">{prompt}</p>
           </motion.div>
         )}
       </AnimatePresence>
