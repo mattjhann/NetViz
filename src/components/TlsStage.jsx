@@ -8,6 +8,12 @@ import StepRail from './StepRail.jsx';
 
 const N = TLS_STEPS.length;
 
+// How far (px) a message slides toward the destination lane as it is "sent".
+// Scaled to the viewport so it reaches across on wide screens but stays sane on
+// small ones; read at module load (CSR only — no SSR in this app).
+const SEND_DISTANCE =
+  typeof window !== 'undefined' ? Math.min(window.innerWidth * 0.42, 560) : 480;
+
 const RAIL_ITEMS = TLS_STEPS.map((s) => ({
   id: s.id,
   label: s.title,
@@ -28,7 +34,7 @@ const makeField = (step, f) => ({
 
 export default function TlsStage() {
   const reducedMotion = useReducedMotion();
-  const { containerRef, activeIndex } = useScrollSteps(N);
+  const { containerRef, activeIndex, engaged } = useScrollSteps(N);
   const [hoveredField, setHoveredField] = useState(null);
 
   useEffect(() => {
@@ -37,7 +43,7 @@ export default function TlsStage() {
 
   const step = TLS_STEPS[activeIndex];
   const fromClient = step.from === 'client';
-  const dir = fromClient ? -1 : 1;
+  const dir = fromClient ? -1 : 1; // sign of the sender's lane (client = left)
 
   const message = (
     <AnimatePresence mode="wait">
@@ -47,7 +53,17 @@ export default function TlsStage() {
         style={{ gridColumn: fromClient ? 1 : 3, '--block-accent': step.accentColor }}
         initial={reducedMotion ? { opacity: 0 } : { opacity: 0, x: dir * 48 }}
         animate={{ opacity: 1, x: 0 }}
-        exit={reducedMotion ? { opacity: 0 } : { opacity: 0, x: dir * -48 }}
+        exit={
+          reducedMotion
+            ? { opacity: 0 }
+            : {
+                // Slide toward the destination lane (opposite the sender) and
+                // fade out, accelerating away to signify the message being sent.
+                opacity: 0,
+                x: -dir * SEND_DISTANCE,
+                transition: { duration: 0.55, ease: 'easeIn' },
+              }
+        }
         transition={{ duration: reducedMotion ? 0.2 : 0.4, ease: 'easeOut' }}
       >
         <div className="tls-msg__head">
@@ -90,7 +106,7 @@ export default function TlsStage() {
       aria-label="TLS 1.3 handshake walkthrough"
     >
       <div className="encap-stage">
-        <StepRail items={RAIL_ITEMS} activeIndex={activeIndex} label="Handshake progress" />
+        <StepRail items={RAIL_ITEMS} activeIndex={activeIndex} label="Handshake progress" hidden={!engaged} />
 
         <div className="encap-stage__inner">
           {/* Caption */}

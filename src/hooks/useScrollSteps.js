@@ -13,6 +13,9 @@ import { useScroll, useMotionValueEvent } from 'framer-motion';
 export default function useScrollSteps(stepCount) {
   const containerRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  // True only while the stage is scrolled into view (pinned), so callers can
+  // hide step-progress UI over the intro/hero and the outro/footer.
+  const [engaged, setEngaged] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -22,6 +25,7 @@ export default function useScrollSteps(stepCount) {
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
     const idx = Math.min(stepCount - 1, Math.max(0, Math.floor(p * stepCount)));
     setActiveIndex(idx);
+    setEngaged(p > 0.001 && p < 0.999);
   });
 
   // Reset to the first step if the number of steps changes (e.g. data swap).
@@ -29,5 +33,5 @@ export default function useScrollSteps(stepCount) {
     setActiveIndex((i) => Math.min(i, stepCount - 1));
   }, [stepCount]);
 
-  return { containerRef, activeIndex, scrollYProgress };
+  return { containerRef, activeIndex, engaged, scrollYProgress };
 }
