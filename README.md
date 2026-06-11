@@ -59,8 +59,8 @@ A multi-stage `Dockerfile` builds the static site with Node and serves it with
 nginx, so it runs on any machine with Docker — no local Node install needed.
 
 ```bash
-docker build -t osi-viz .
-docker run --rm -p 8080:80 osi-viz
+docker build -t netviz .
+docker run --rm -p 8080:80 netviz
 # then open http://localhost:8080
 ```
 
@@ -73,8 +73,8 @@ GitHub Pages on every push to `main`. Two one-time steps:
    **Source: GitHub Actions**.
 2. Merge to `main` (or run the workflow manually from the **Actions** tab).
 
-The site will be served at `https://<user>.github.io/<repo>/` — for this repo,
-`https://mattjhann.github.io/OSI-Viz/`.
+The site will be served at `https://<user>.github.io/<repo>/` — once the repo is
+named NetViz, `https://mattjhann.github.io/NetViz/`.
 
 How it works:
 
@@ -83,14 +83,14 @@ How it works:
   `basename`, so links resolve under the subpath. The default build (Docker/nginx)
   stays at `/`.
 - GitHub Pages has no SPA fallback, so the workflow copies `index.html` to
-  `404.html`; deep links like `/OSI-Viz/tls` then load and the client-side router
+  `404.html`; deep links like `/NetViz/tls` then load and the client-side router
   takes over.
 
 ### Continuous builds
 
 `.github/workflows/docker-build.yml` builds the image on every push and pull
 request. On the default branch (and version tags) it also publishes the image to
-the GitHub Container Registry at `ghcr.io/<owner>/osi-viz`, tagged with the branch
+the GitHub Container Registry at `ghcr.io/<owner>/netviz`, tagged with the branch
 name, short commit SHA, semver tag, and `latest`.
 
 ## How it works

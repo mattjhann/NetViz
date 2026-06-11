@@ -1,9 +1,9 @@
 {
-  "name": "osi-viz",
+  "name": "netviz",
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "A scroll-driven visualization of the TCP/IP network encapsulation process.",
+  "description": "Scroll-driven visualizations of how networks work, from encapsulation to the TLS handshake.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
