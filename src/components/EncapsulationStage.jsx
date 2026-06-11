@@ -1,30 +1,27 @@
-import { useEffect, useRef, useState } from 'react';
-import { useScroll, useMotionValueEvent, useReducedMotion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { useReducedMotion } from 'framer-motion';
 import { LAYERS } from '../data/layers.js';
+import useScrollSteps from '../hooks/useScrollSteps.js';
 import PacketAssembly from './PacketAssembly.jsx';
 import FieldDetail from './FieldDetail.jsx';
-import LayerRail from './LayerRail.jsx';
+import StepRail from './StepRail.jsx';
 import LayerCaption from './LayerCaption.jsx';
 
 const N = LAYERS.length;
 
+// Rail items derived from the layer data.
+const RAIL_ITEMS = LAYERS.map((l) => ({
+  id: l.id,
+  label: l.layerName,
+  sublabel: l.pduName,
+  accentColor: l.accentColor,
+}));
+
 export default function EncapsulationStage() {
-  const containerRef = useRef(null);
   const reducedMotion = useReducedMotion();
-  const [activeIndex, setActiveIndex] = useState(0);
+  const { containerRef, activeIndex } = useScrollSteps(N);
   // The header/trailer field the user is currently inspecting (hover or focus).
   const [hoveredField, setHoveredField] = useState(null);
-
-  // Drive the active layer from scroll progress over the tall container.
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end'],
-  });
-
-  useMotionValueEvent(scrollYProgress, 'change', (p) => {
-    const idx = Math.min(N - 1, Math.max(0, Math.floor(p * N)));
-    setActiveIndex(idx);
-  });
 
   // Whenever the layer changes, drop any field we were inspecting.
   useEffect(() => {
@@ -32,6 +29,10 @@ export default function EncapsulationStage() {
   }, [activeIndex]);
 
   const activeLayer = LAYERS[activeIndex];
+  const prompt =
+    activeLayer.headerFields.length > 0 || activeLayer.trailerFields.length > 0
+      ? 'Hover or tab through a field above to learn what it does.'
+      : activeLayer.scrollHint;
 
   return (
     <section
@@ -41,12 +42,16 @@ export default function EncapsulationStage() {
       aria-label="Network encapsulation walkthrough"
     >
       <div className="encap-stage">
-        <LayerRail activeIndex={activeIndex} />
+        <StepRail items={RAIL_ITEMS} activeIndex={activeIndex} label="Encapsulation progress" />
 
         <div className="encap-stage__inner">
           <LayerCaption layer={activeLayer} index={activeIndex} reducedMotion={reducedMotion} />
 
-          <div className="encap-canvas" role="img" aria-label={`${activeLayer.layerName} layer producing a ${activeLayer.pduName}`}>
+          <div
+            className="encap-canvas"
+            role="img"
+            aria-label={`${activeLayer.layerName} layer producing a ${activeLayer.pduName}`}
+          >
             <PacketAssembly
               activeIndex={activeIndex}
               hoveredField={hoveredField}
@@ -57,7 +62,8 @@ export default function EncapsulationStage() {
 
           <FieldDetail
             field={hoveredField}
-            layer={activeLayer}
+            prompt={prompt}
+            accentColor={activeLayer.accentColor}
             reducedMotion={reducedMotion}
           />
         </div>

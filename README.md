@@ -1,21 +1,48 @@
-# OSI-Viz
+# NetViz
 
-A beautiful, scroll-driven visualization of the **TCP/IP network encapsulation**
-process. As you scroll, a rectangle representing your data is built up layer by
-layer — each layer wraps the previous one in its own header (and, at the data-link
-layer, a trailer), with the newly-added part highlighted and the previous bundle
-nested inside as the payload.
+**NetViz** is a collection of beautiful, scroll-driven visualizations of how
+networks really work. A home screen lists every visualization, and a pop-out left
+menu lets you jump between them.
 
-**Data → Segment → Packet → Frame → Bits**
+Current visualizations:
 
-Hover (or keyboard-tab through) any header field of the current layer to read a
-detailed explanation of what that field does, shown directly under the data
-rectangle.
+- **Network Encapsulation** — a rectangle representing your data is built up layer
+  by layer as you scroll: each layer wraps the previous one in its own header (and,
+  at the data-link layer, a trailer), with the newly-added part highlighted and the
+  previous bundle nested inside as the payload (**Data → Segment → Packet → Frame →
+  Bits**).
+- **TLS 1.3 Handshake** — step through the messages that establish a secure channel
+  in a single round trip, watching each one cross between client and server.
+
+In every visualization you can hover (or keyboard-tab through) any field to read a
+detailed explanation of what it does, shown directly under the rectangle.
 
 ## Stack
 
 - [React](https://react.dev/) + [Vite](https://vitejs.dev/)
+- [React Router](https://reactrouter.com/) for client-side routing
 - [Framer Motion](https://www.framer.com/motion/) for scroll-linked animation
+
+## Adding a new visualization
+
+NetViz is built to be extended. A central **page registry**
+(`src/pages/registry.jsx`) is the single source of truth that drives the side menu,
+the routes, and the home-screen cards. To add a visualization:
+
+1. Create `src/pages/<Name>Page.jsx` (and optionally `src/data/<name>.js` for its
+   content).
+2. Add one entry to the `PAGES` array in `src/pages/registry.jsx`:
+   `{ id, path, title, tagline, accent, icon, Component }`.
+
+The menu, routing, and home cards update automatically — no other wiring needed.
+
+Reusable building blocks you can lean on:
+
+- `src/hooks/useScrollSteps.js` — maps scroll progress over a tall track to a
+  discrete active step (the engine behind every scroll-driven page).
+- `src/components/PacketBlock.jsx` — a labeled, hoverable rectangle/field.
+- `src/components/FieldDetail.jsx` — the explanation panel shown under the diagram.
+- `src/components/StepRail.jsx` — the fixed progress rail.
 
 ## Getting started
 
