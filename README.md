@@ -13,6 +13,8 @@ Current visualizations:
   Bits**).
 - **TLS 1.3 Handshake** — step through the messages that establish a secure channel
   in a single round trip, watching each one cross between client and server.
+- **DNS Resolution** — follow a lookup of `www.example.com` as it walks the DNS
+  hierarchy (root → TLD → authoritative) and the answer is cached and returned.
 
 In every visualization you can hover (or keyboard-tab through) any field to read a
 detailed explanation of what it does, shown directly under the rectangle.

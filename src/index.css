@@ -947,6 +947,125 @@ p {
 }
 
 /* ===========================================================================
+   DNS resolution — hierarchy journey + message
+   ========================================================================= */
+.dns-journey {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: clamp(0.4rem, 2vw, 1.4rem);
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.dns-actor {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid var(--panel-border);
+  background: rgba(255, 255, 255, 0.02);
+  min-width: 96px;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+/* Connector line between actors. */
+.dns-actor:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: calc(-1 * clamp(0.4rem, 2vw, 1.4rem) - 1px);
+  width: clamp(0.4rem, 2vw, 1.4rem);
+  height: 2px;
+  background: var(--panel-border);
+}
+
+.dns-actor.is-from,
+.dns-actor.is-to {
+  opacity: 1;
+  border-color: color-mix(in srgb, var(--block-accent) 55%, transparent);
+  background: color-mix(in srgb, var(--block-accent) 8%, transparent);
+}
+
+.dns-actor.is-to {
+  box-shadow: 0 0 26px color-mix(in srgb, var(--block-accent) 28%, transparent);
+}
+
+.dns-actor__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--text-faint);
+}
+
+.dns-actor.is-from .dns-actor__dot {
+  border-color: var(--block-accent);
+}
+
+.dns-actor.is-to .dns-actor__dot {
+  border-color: var(--block-accent);
+  background: var(--block-accent);
+}
+
+.dns-actor__label {
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.dns-actor__sub {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  color: var(--text-faint);
+}
+
+.dns-msg-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.dns-msg {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1rem 1.1rem;
+  border-radius: 14px;
+  border: 2px solid var(--block-accent);
+  background: color-mix(in srgb, var(--block-accent) 10%, var(--bg-soft));
+  box-shadow: 0 0 36px color-mix(in srgb, var(--block-accent) 22%, transparent);
+  max-width: 100%;
+}
+
+.dns-msg__head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.dns-msg__arrow {
+  color: var(--block-accent);
+  font-size: 1rem;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--block-accent) 55%, transparent));
+}
+
+.dns-msg__title {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.dns-msg__fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* ===========================================================================
    Responsive
    ========================================================================= */
 /* Reserve a left gutter for the fixed progress rail so centered stage content
