@@ -6,7 +6,7 @@ export default function Footer() {
         end, the receiver reverses every step (decapsulation) to recover your data.
       </p>
       <p className="footer__credit">
-        OSI-Viz · an interactive look at the TCP/IP stack
+        NetViz · an interactive look at the TCP/IP stack
       </p>
     </footer>
   );
