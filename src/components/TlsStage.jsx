@@ -34,7 +34,7 @@ const makeField = (step, f) => ({
 
 export default function TlsStage() {
   const reducedMotion = useReducedMotion();
-  const { containerRef, activeIndex } = useScrollSteps(N);
+  const { containerRef, activeIndex, engaged } = useScrollSteps(N);
   const [hoveredField, setHoveredField] = useState(null);
 
   useEffect(() => {
@@ -106,7 +106,7 @@ export default function TlsStage() {
       aria-label="TLS 1.3 handshake walkthrough"
     >
       <div className="encap-stage">
-        <StepRail items={RAIL_ITEMS} activeIndex={activeIndex} label="Handshake progress" />
+        <StepRail items={RAIL_ITEMS} activeIndex={activeIndex} label="Handshake progress" hidden={!engaged} />
 
         <div className="encap-stage__inner">
           {/* Caption */}

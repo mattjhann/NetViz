@@ -1,9 +1,9 @@
 // Fixed side rail acting as a live progress tracker for a scroll-stepped stage.
 // Generic across visualizations: pass `items` (each `{ label, sublabel,
 // accentColor }`), the `activeIndex`, and an accessible `label`.
-export default function StepRail({ items, activeIndex, label = 'Progress' }) {
+export default function StepRail({ items, activeIndex, label = 'Progress', hidden = false }) {
   return (
-    <nav className="rail" aria-label={label}>
+    <nav className={`rail ${hidden ? 'is-hidden' : ''}`} aria-label={label} aria-hidden={hidden}>
       <ol className="rail__list">
         {items.map((item, i) => {
           const state = i === activeIndex ? 'active' : i < activeIndex ? 'done' : 'todo';

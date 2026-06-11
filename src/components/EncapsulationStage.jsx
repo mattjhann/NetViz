@@ -19,7 +19,7 @@ const RAIL_ITEMS = LAYERS.map((l) => ({
 
 export default function EncapsulationStage() {
   const reducedMotion = useReducedMotion();
-  const { containerRef, activeIndex } = useScrollSteps(N);
+  const { containerRef, activeIndex, engaged } = useScrollSteps(N);
   // The header/trailer field the user is currently inspecting (hover or focus).
   const [hoveredField, setHoveredField] = useState(null);
 
@@ -42,7 +42,7 @@ export default function EncapsulationStage() {
       aria-label="Network encapsulation walkthrough"
     >
       <div className="encap-stage">
-        <StepRail items={RAIL_ITEMS} activeIndex={activeIndex} label="Encapsulation progress" />
+        <StepRail items={RAIL_ITEMS} activeIndex={activeIndex} label="Encapsulation progress" hidden={!engaged} />
 
         <div className="encap-stage__inner">
           <LayerCaption layer={activeLayer} index={activeIndex} reducedMotion={reducedMotion} />
