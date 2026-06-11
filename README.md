@@ -64,6 +64,28 @@ docker run --rm -p 8080:80 osi-viz
 # then open http://localhost:8080
 ```
 
+## Host on GitHub Pages
+
+A workflow (`.github/workflows/deploy-pages.yml`) builds the site and deploys it to
+GitHub Pages on every push to `main`. Two one-time steps:
+
+1. In the repo, go to **Settings → Pages → Build and deployment** and set
+   **Source: GitHub Actions**.
+2. Merge to `main` (or run the workflow manually from the **Actions** tab).
+
+The site will be served at `https://<user>.github.io/<repo>/` — for this repo,
+`https://mattjhann.github.io/OSI-Viz/`.
+
+How it works:
+
+- Project Pages live under a subpath, so the workflow builds with
+  `VITE_BASE=/<repo>/` and the router reads `import.meta.env.BASE_URL` as its
+  `basename`, so links resolve under the subpath. The default build (Docker/nginx)
+  stays at `/`.
+- GitHub Pages has no SPA fallback, so the workflow copies `index.html` to
+  `404.html`; deep links like `/OSI-Viz/tls` then load and the client-side router
+  takes over.
+
 ### Continuous builds
 
 `.github/workflows/docker-build.yml` builds the image on every push and pull
