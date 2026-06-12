@@ -1066,6 +1066,170 @@ p {
 }
 
 /* ===========================================================================
+   BGP routing — AS topology graph
+   ========================================================================= */
+.bgp-stage-graph {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  min-height: 0;
+}
+
+.bgp-topology {
+  width: min(760px, 100%);
+  height: auto;
+  max-height: 46vh;
+  overflow: visible;
+}
+
+.bgp-link {
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 0.5;
+  transition: stroke 0.4s ease, stroke-width 0.4s ease, opacity 0.4s ease;
+}
+
+.bgp-link.is-active {
+  stroke: var(--block-accent);
+  stroke-width: 1;
+  filter: drop-shadow(0 0 1.4px color-mix(in srgb, var(--block-accent) 70%, transparent));
+}
+
+.bgp-link.is-down {
+  stroke: #ff6b8b;
+  stroke-width: 0.7;
+  stroke-dasharray: 1.6 1.4;
+  opacity: 0.85;
+}
+
+.bgp-link__x {
+  fill: #ff6b8b;
+  font-size: 4px;
+  font-weight: 700;
+}
+
+.bgp-traffic {
+  fill: var(--block-accent);
+  filter: drop-shadow(0 0 1.8px color-mix(in srgb, var(--block-accent) 80%, transparent));
+}
+
+.bgp-node__dot {
+  fill: var(--bg-soft);
+  stroke: var(--text-faint);
+  stroke-width: 0.7;
+  transition: stroke 0.35s ease, fill 0.35s ease, filter 0.35s ease;
+}
+
+.bgp-node.is-learned .bgp-node__dot {
+  stroke: #42d6a4;
+}
+
+.bgp-node.is-origin .bgp-node__dot {
+  stroke: #9d7bff;
+  fill: color-mix(in srgb, #9d7bff 22%, var(--bg-soft));
+}
+
+.bgp-node.is-vantage .bgp-node__dot {
+  stroke: #7c8cff;
+  fill: color-mix(in srgb, #7c8cff 22%, var(--bg-soft));
+}
+
+.bgp-node.is-onpath .bgp-node__dot {
+  stroke: var(--block-accent);
+  fill: color-mix(in srgb, var(--block-accent) 26%, var(--bg-soft));
+  filter: drop-shadow(0 0 2px color-mix(in srgb, var(--block-accent) 70%, transparent));
+}
+
+.bgp-node__asn {
+  fill: var(--text);
+  font-size: 2.7px;
+  font-weight: 700;
+}
+
+.bgp-node__name {
+  fill: var(--text-faint);
+  font-size: 2.2px;
+}
+
+.bgp-legend {
+  display: flex;
+  gap: 1rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+.bgp-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.bgp-legend__item::before {
+  content: '';
+  width: 16px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.bgp-legend__item--active::before {
+  background: var(--block-accent);
+}
+
+.bgp-legend__item--down::before {
+  background: #ff6b8b;
+}
+
+.bgp-msg-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 84px;
+}
+
+.bgp-msg {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: 14px;
+  border: 2px solid var(--block-accent);
+  background: color-mix(in srgb, var(--block-accent) 10%, var(--bg-soft));
+  box-shadow: 0 0 30px color-mix(in srgb, var(--block-accent) 20%, transparent);
+  max-width: 100%;
+}
+
+.bgp-msg__tag {
+  align-self: flex-start;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  padding: 0.2em 0.7em;
+  border-radius: 999px;
+  color: var(--bg);
+  background: var(--block-accent);
+  font-weight: 700;
+}
+
+.bgp-msg__tag.is-withdraw {
+  background: #ff6b8b;
+}
+
+.bgp-msg__fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.bgp-msg-note {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--text-faint);
+}
+
+/* ===========================================================================
    Responsive
    ========================================================================= */
 /* Reserve a left gutter for the fixed progress rail so centered stage content
