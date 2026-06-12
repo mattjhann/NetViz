@@ -5,6 +5,7 @@ import useScrollSteps from '../hooks/useScrollSteps.js';
 import PacketBlock from './PacketBlock.jsx';
 import FieldDetail from './FieldDetail.jsx';
 import StepRail from './StepRail.jsx';
+import SnapCells from './SnapCells.jsx';
 
 const N = DNS_STEPS.length;
 const actorIndex = (id) => ACTORS.findIndex((a) => a.id === id);
@@ -45,7 +46,6 @@ export default function DnsStage() {
     <section
       ref={containerRef}
       className="encap-track"
-      style={{ height: `${(N + 1) * 100}vh` }}
       aria-label="DNS resolution walkthrough"
     >
       <div className="encap-stage">
@@ -144,6 +144,7 @@ export default function DnsStage() {
           />
         </div>
       </div>
+      <SnapCells count={N} />
     </section>
   );
 }
