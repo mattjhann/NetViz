@@ -232,6 +232,7 @@ p {
    ========================================================================= */
 .hero {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -302,6 +303,7 @@ p {
   position: sticky;
   top: 0;
   height: 100vh;
+  height: 100dvh; /* match the actual (mobile URL-bar) viewport so snap aligns */
   z-index: 1; /* sit above the snap cells behind it */
   display: flex;
   align-items: center;
@@ -317,10 +319,12 @@ p {
   position: relative;
   z-index: 0;
   margin-top: -100vh;
+  margin-top: -100dvh;
 }
 
 .encap-snap__cell {
   height: 100vh;
+  height: 100dvh;
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
@@ -439,6 +443,12 @@ html.snap-on {
 
 .assembly {
   margin: auto;
+}
+
+/* Sizes to its content's natural width so it can be transform-scaled to fit
+   narrow screens (see PacketAssembly). */
+.assembly__scaler {
+  display: inline-block;
 }
 
 .assembly__inner {
@@ -763,6 +773,7 @@ html.snap-on {
    ========================================================================= */
 .footer {
   min-height: 70vh;
+  min-height: 70dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
