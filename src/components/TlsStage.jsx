@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { TLS_STEPS } from '../data/tlsHandshake.js';
-import useScrollSteps from '../hooks/useScrollSteps.js';
 import PacketBlock from './PacketBlock.jsx';
 import FieldDetail from './FieldDetail.jsx';
 import StepRail from './StepRail.jsx';
-import SnapCells from './SnapCells.jsx';
 
 const N = TLS_STEPS.length;
 
@@ -33,9 +31,8 @@ const makeField = (step, f) => ({
   kind: 'field',
 });
 
-export default function TlsStage() {
+export default function TlsStage({ activeIndex, onSelectStep }) {
   const reducedMotion = useReducedMotion();
-  const { containerRef, activeIndex, engaged } = useScrollSteps(N);
   const [hoveredField, setHoveredField] = useState(null);
 
   useEffect(() => {
@@ -100,13 +97,8 @@ export default function TlsStage() {
   );
 
   return (
-    <section
-      ref={containerRef}
-      className="encap-track"
-      aria-label="TLS 1.3 handshake walkthrough"
-    >
-      <div className="encap-stage">
-        <StepRail items={RAIL_ITEMS} activeIndex={activeIndex} label="Handshake progress" hidden={!engaged} />
+    <div className="encap-stage" aria-label="TLS 1.3 handshake walkthrough">
+        <StepRail items={RAIL_ITEMS} activeIndex={activeIndex} label="Handshake progress" onSelect={onSelectStep} />
 
         <div className="encap-stage__inner">
           {/* Caption */}
@@ -157,8 +149,6 @@ export default function TlsStage() {
             reducedMotion={reducedMotion}
           />
         </div>
-      </div>
-      <SnapCells count={N} />
-    </section>
+    </div>
   );
 }

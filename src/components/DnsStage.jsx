@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { DNS_STEPS, ACTORS } from '../data/dnsResolution.js';
-import useScrollSteps from '../hooks/useScrollSteps.js';
 import PacketBlock from './PacketBlock.jsx';
 import FieldDetail from './FieldDetail.jsx';
 import StepRail from './StepRail.jsx';
-import SnapCells from './SnapCells.jsx';
 
 const N = DNS_STEPS.length;
 const actorIndex = (id) => ACTORS.findIndex((a) => a.id === id);
@@ -27,9 +25,8 @@ const makeField = (step, f) => ({
   kind: step.direction === 'query' ? 'query' : 'response',
 });
 
-export default function DnsStage() {
+export default function DnsStage({ activeIndex, onSelectStep }) {
   const reducedMotion = useReducedMotion();
-  const { containerRef, activeIndex, engaged } = useScrollSteps(N);
   const [hoveredField, setHoveredField] = useState(null);
 
   useEffect(() => {
@@ -43,13 +40,8 @@ export default function DnsStage() {
   const arrow = goingRight ? '▶' : '◀';
 
   return (
-    <section
-      ref={containerRef}
-      className="encap-track"
-      aria-label="DNS resolution walkthrough"
-    >
-      <div className="encap-stage">
-        <StepRail items={RAIL_ITEMS} activeIndex={activeIndex} label="Resolution progress" hidden={!engaged} />
+    <div className="encap-stage" aria-label="DNS resolution walkthrough">
+        <StepRail items={RAIL_ITEMS} activeIndex={activeIndex} label="Resolution progress" onSelect={onSelectStep} />
 
         <div className="encap-stage__inner">
           {/* Caption */}
@@ -143,8 +135,6 @@ export default function DnsStage() {
             reducedMotion={reducedMotion}
           />
         </div>
-      </div>
-      <SnapCells count={N} />
-    </section>
+    </div>
   );
 }

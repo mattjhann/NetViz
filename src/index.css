@@ -231,13 +231,13 @@ p {
    Hero
    ========================================================================= */
 .hero {
-  min-height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 6vh 6vw;
+  padding: max(8vh, 72px) 6vw 6vh;
   gap: 1.4rem;
 }
 
@@ -292,57 +292,78 @@ p {
 }
 
 /* ===========================================================================
-   Encapsulation stage (sticky / pinned)
+   Deck — a fixed, full-viewport sequence of sections (JS-driven stepping)
    ========================================================================= */
-.encap-track {
-  position: relative;
-}
-
-.encap-stage {
-  position: sticky;
+.deck {
+  position: fixed;
+  left: 0;
+  right: 0;
   top: 0;
   height: 100vh;
-  z-index: 1; /* sit above the snap cells behind it */
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
+  z-index: 1;
+}
+
+/* Sections are stacked and cross-slide; each fills the deck. */
+.deck__section {
+  position: absolute;
+  inset: 0;
+}
+
+/* While a deck owns the screen, nothing else scrolls. */
+html.deck-mode,
+html.deck-mode body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* Bottom progress / advance affordance. */
+.deck-hint {
+  position: absolute;
+  left: 50%;
+  bottom: max(1.4rem, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  appearance: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--text-faint);
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+}
+
+.deck-hint:hover {
+  color: var(--text-dim);
+}
+
+.deck-hint:focus-visible {
+  outline: 2px solid #7c8cff;
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.deck-hint__chevron {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+/* The stage itself — a full-height centred panel (no longer scroll-pinned). */
+.encap-stage {
+  position: relative;
+  height: 100%;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-}
-
-/* Transparent full-viewport scroll-snap targets behind the sticky stage. They
-   provide the scroll height and the rest points so each scroll gesture advances
-   exactly one step. Pulled up behind the stage so the original track height and
-   the useScrollSteps progress mapping are preserved. */
-.encap-snap {
-  position: relative;
-  z-index: 0;
-  margin-top: -100vh;
-}
-
-.encap-snap__cell {
-  height: 100vh;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-}
-
-.encap-snap__cell.is-tail {
-  scroll-snap-align: none; /* final pin room only — not a rest point */
-}
-
-/* Section-to-section snapping, enabled only on visualization routes (toggled by
-   App). The hero and footer are snap sections too, so the whole page reads as
-   discrete sections. */
-html.snap-on {
-  scroll-snap-type: y mandatory;
-}
-
-.hero,
-.footer {
-  scroll-snap-align: start;
-}
-
-.footer {
-  scroll-snap-stop: always;
 }
 
 .encap-stage__inner {
@@ -717,6 +738,32 @@ html.snap-on {
   opacity: 1;
 }
 
+/* Clickable rail entries (deck jump-to-step). */
+.rail__btn {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 0.15rem 0;
+  margin: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rail__btn:focus-visible {
+  outline: 2px solid var(--block-accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.rail__item:not(.is-active) .rail__btn:hover {
+  opacity: 1;
+}
+
 .rail__dot {
   width: 12px;
   height: 12px;
@@ -762,7 +809,7 @@ html.snap-on {
    Footer
    ========================================================================= */
 .footer {
-  min-height: 70vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;

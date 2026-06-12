@@ -1,14 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useReducedMotion } from 'framer-motion';
 import { LAYERS } from '../data/layers.js';
-import useScrollSteps from '../hooks/useScrollSteps.js';
 import PacketAssembly from './PacketAssembly.jsx';
 import FieldDetail from './FieldDetail.jsx';
 import StepRail from './StepRail.jsx';
-import SnapCells from './SnapCells.jsx';
 import LayerCaption from './LayerCaption.jsx';
-
-const N = LAYERS.length;
 
 // Rail items derived from the layer data.
 const RAIL_ITEMS = LAYERS.map((l) => ({
@@ -18,9 +14,8 @@ const RAIL_ITEMS = LAYERS.map((l) => ({
   accentColor: l.accentColor,
 }));
 
-export default function EncapsulationStage() {
+export default function EncapsulationStage({ activeIndex, onSelectStep }) {
   const reducedMotion = useReducedMotion();
-  const { containerRef, activeIndex, engaged } = useScrollSteps(N);
   // The header/trailer field the user is currently inspecting (hover or focus).
   const [hoveredField, setHoveredField] = useState(null);
 
@@ -36,13 +31,8 @@ export default function EncapsulationStage() {
       : activeLayer.scrollHint;
 
   return (
-    <section
-      ref={containerRef}
-      className="encap-track"
-      aria-label="Network encapsulation walkthrough"
-    >
-      <div className="encap-stage">
-        <StepRail items={RAIL_ITEMS} activeIndex={activeIndex} label="Encapsulation progress" hidden={!engaged} />
+    <div className="encap-stage" aria-label="Network encapsulation walkthrough">
+        <StepRail items={RAIL_ITEMS} activeIndex={activeIndex} label="Encapsulation progress" onSelect={onSelectStep} />
 
         <div className="encap-stage__inner">
           <LayerCaption layer={activeLayer} index={activeIndex} reducedMotion={reducedMotion} />
@@ -67,8 +57,6 @@ export default function EncapsulationStage() {
             reducedMotion={reducedMotion}
           />
         </div>
-      </div>
-      <SnapCells count={N} />
-    </section>
+    </div>
   );
 }
