@@ -373,7 +373,7 @@ html.deck-mode body {
   grid-template-rows: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: clamp(1rem, 2.2vh, 2rem);
-  padding: max(8vh, 72px) 0 4vh;
+  padding: max(8vh, 72px) 0 max(4.5rem, 8vh); /* bottom clears the deck hint */
 }
 
 /* --- Layer caption -------------------------------------------------------- */
@@ -460,6 +460,12 @@ html.deck-mode body {
 
 .assembly {
   margin: auto;
+}
+
+/* Sizes to its content's natural width so it can be transform-scaled to fit
+   narrow screens (see PacketAssembly). */
+.assembly__scaler {
+  display: inline-block;
 }
 
 .assembly__inner {
