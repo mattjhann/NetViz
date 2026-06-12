@@ -15,6 +15,9 @@ Current visualizations:
   in a single round trip, watching each one cross between client and server.
 - **DNS Resolution** — follow a lookup of `www.example.com` as it walks the DNS
   hierarchy (root → TLD → authoritative) and the answer is cached and returned.
+- **BGP Routing** — watch a prefix propagate between Autonomous Systems on a topology
+  graph, a best path get chosen by shortest AS_PATH, then a link fail and the route
+  withdraw and reconverge onto a backup path.
 
 In every visualization you can hover (or keyboard-tab through) any field to read a
 detailed explanation of what it does, shown directly under the rectangle.

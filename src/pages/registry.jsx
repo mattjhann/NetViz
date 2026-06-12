@@ -1,6 +1,7 @@
 import EncapsulationPage from './EncapsulationPage.jsx';
 import TlsHandshakePage from './TlsHandshakePage.jsx';
 import DnsResolutionPage from './DnsResolutionPage.jsx';
+import BgpRoutingPage from './BgpRoutingPage.jsx';
 
 // ===========================================================================
 // PAGE REGISTRY — the single place that defines every visualization.
@@ -38,6 +39,15 @@ const DnsIcon = () => (
   </svg>
 );
 
+const RouteIcon = () => (
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+    <circle cx="5" cy="6" r="2.4" />
+    <circle cx="19" cy="6" r="2.4" />
+    <circle cx="12" cy="18" r="2.4" />
+    <path d="M7.2 6H19M5 8.4 10.6 16M19 8.4 13.4 16" />
+  </svg>
+);
+
 export const PAGES = [
   {
     id: 'encapsulation',
@@ -65,6 +75,15 @@ export const PAGES = [
     accent: '#ffb454',
     icon: <DnsIcon />,
     Component: DnsResolutionPage,
+  },
+  {
+    id: 'bgp',
+    path: '/bgp',
+    title: 'BGP Routing',
+    tagline: 'Watch a route propagate between Autonomous Systems — then reroute when a link fails.',
+    accent: '#ff6b8b',
+    icon: <RouteIcon />,
+    Component: BgpRoutingPage,
   },
 ];
 
