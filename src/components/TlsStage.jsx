@@ -5,6 +5,7 @@ import useScrollSteps from '../hooks/useScrollSteps.js';
 import PacketBlock from './PacketBlock.jsx';
 import FieldDetail from './FieldDetail.jsx';
 import StepRail from './StepRail.jsx';
+import SnapCells from './SnapCells.jsx';
 
 const N = TLS_STEPS.length;
 
@@ -102,7 +103,6 @@ export default function TlsStage() {
     <section
       ref={containerRef}
       className="encap-track"
-      style={{ height: `${(N + 1) * 100}vh` }}
       aria-label="TLS 1.3 handshake walkthrough"
     >
       <div className="encap-stage">
@@ -158,6 +158,7 @@ export default function TlsStage() {
           />
         </div>
       </div>
+      <SnapCells count={N} />
     </section>
   );
 }

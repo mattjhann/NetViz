@@ -5,6 +5,7 @@ import useScrollSteps from '../hooks/useScrollSteps.js';
 import PacketBlock from './PacketBlock.jsx';
 import FieldDetail from './FieldDetail.jsx';
 import StepRail from './StepRail.jsx';
+import SnapCells from './SnapCells.jsx';
 import BgpTopology from './BgpTopology.jsx';
 
 const N = BGP_STEPS.length;
@@ -40,7 +41,6 @@ export default function BgpStage() {
     <section
       ref={containerRef}
       className="encap-track"
-      style={{ height: `${(N + 1) * 100}vh` }}
       aria-label="BGP routing walkthrough"
     >
       <div className="encap-stage">
@@ -138,6 +138,7 @@ export default function BgpStage() {
           />
         </div>
       </div>
+      <SnapCells count={N} />
     </section>
   );
 }

@@ -5,6 +5,7 @@ import useScrollSteps from '../hooks/useScrollSteps.js';
 import PacketAssembly from './PacketAssembly.jsx';
 import FieldDetail from './FieldDetail.jsx';
 import StepRail from './StepRail.jsx';
+import SnapCells from './SnapCells.jsx';
 import LayerCaption from './LayerCaption.jsx';
 
 const N = LAYERS.length;
@@ -38,7 +39,6 @@ export default function EncapsulationStage() {
     <section
       ref={containerRef}
       className="encap-track"
-      style={{ height: `${(N + 1) * 100}vh` }}
       aria-label="Network encapsulation walkthrough"
     >
       <div className="encap-stage">
@@ -68,6 +68,7 @@ export default function EncapsulationStage() {
           />
         </div>
       </div>
+      <SnapCells count={N} />
     </section>
   );
 }
