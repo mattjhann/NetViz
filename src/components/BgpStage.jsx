@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { BGP_STEPS } from '../data/bgpRouting.js';
-import useScrollSteps from '../hooks/useScrollSteps.js';
 import PacketBlock from './PacketBlock.jsx';
 import FieldDetail from './FieldDetail.jsx';
 import StepRail from './StepRail.jsx';
-import SnapCells from './SnapCells.jsx';
 import BgpTopology from './BgpTopology.jsx';
 
 const N = BGP_STEPS.length;
@@ -26,9 +24,8 @@ const makeField = (step, f) => ({
   kind: step.message?.type ?? 'UPDATE',
 });
 
-export default function BgpStage() {
+export default function BgpStage({ activeIndex, onSelectStep }) {
   const reducedMotion = useReducedMotion();
-  const { containerRef, activeIndex, engaged } = useScrollSteps(N);
   const [hoveredField, setHoveredField] = useState(null);
 
   useEffect(() => {
@@ -38,13 +35,8 @@ export default function BgpStage() {
   const step = BGP_STEPS[activeIndex];
 
   return (
-    <section
-      ref={containerRef}
-      className="encap-track"
-      aria-label="BGP routing walkthrough"
-    >
-      <div className="encap-stage">
-        <StepRail items={RAIL_ITEMS} activeIndex={activeIndex} label="Routing progress" hidden={!engaged} />
+    <div className="encap-stage" aria-label="BGP routing walkthrough">
+        <StepRail items={RAIL_ITEMS} activeIndex={activeIndex} label="Routing progress" onSelect={onSelectStep} />
 
         <div className="encap-stage__inner">
           {/* Caption */}
@@ -137,8 +129,6 @@ export default function BgpStage() {
             reducedMotion={reducedMotion}
           />
         </div>
-      </div>
-      <SnapCells count={N} />
-    </section>
+    </div>
   );
 }

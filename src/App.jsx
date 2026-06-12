@@ -15,14 +15,6 @@ export default function App() {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  // Enable section-to-section scroll snapping only on the visualization pages
-  // (every registered page; the home route scrolls freely).
-  useEffect(() => {
-    const isStage = PAGES.some((p) => p.path === location.pathname);
-    document.documentElement.classList.toggle('snap-on', isStage);
-    return () => document.documentElement.classList.remove('snap-on');
-  }, [location.pathname]);
-
   return (
     <div className="app">
       <div className="backdrop" aria-hidden="true" />
