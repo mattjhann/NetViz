@@ -1,4 +1,3 @@
-import { useLayoutEffect, useRef, useState } from 'react';
 import { LayoutGroup, motion } from 'framer-motion';
 import { LAYERS } from '../data/layers.js';
 import PacketBlock from './PacketBlock.jsx';
@@ -19,31 +18,6 @@ const makeField = (layer, field, kind) => ({
 });
 
 export default function PacketAssembly({ activeIndex, hoveredField, onInspect, reducedMotion }) {
-  // Scale the (non-wrapping, concentric) assembly down to fit narrow screens so
-  // it never overflows the viewport. We size the footprint to the scaled box so
-  // the transform doesn't leave layout overflow behind.
-  const scalerRef = useRef(null);
-  const [fit, setFit] = useState({ scale: 1, w: undefined, h: undefined });
-
-  useLayoutEffect(() => {
-    const el = scalerRef.current;
-    if (!el) return undefined;
-    const measure = () => {
-      const canvas = el.parentElement?.parentElement; // scaler -> .assembly -> .encap-canvas
-      if (!canvas) return;
-      const avail = canvas.clientWidth - 8; // small safety margin
-      const naturalW = el.scrollWidth;
-      const naturalH = el.scrollHeight;
-      const scale = naturalW > avail && avail > 0 ? avail / naturalW : 1;
-      setFit({ scale, w: naturalW * scale, h: naturalH * scale });
-    };
-    measure();
-    const canvas = el.parentElement?.parentElement;
-    const ro = new ResizeObserver(measure);
-    if (canvas) ro.observe(canvas);
-    return () => ro.disconnect();
-  }, [activeIndex]);
-
   const sharedTransition = reducedMotion
     ? { duration: 0.2 }
     : { type: 'spring', stiffness: 220, damping: 30 };
@@ -196,18 +170,11 @@ export default function PacketAssembly({ activeIndex, hoveredField, onInspect, r
     );
   }
 
-  const scaled = fit.scale < 1;
   return (
-    <div className="assembly" style={scaled ? { width: fit.w, height: fit.h } : undefined}>
-      <div
-        className="assembly__scaler"
-        ref={scalerRef}
-        style={scaled ? { transform: `scale(${fit.scale})`, transformOrigin: 'top left' } : undefined}
-      >
-        <LayoutGroup>
-          <div className="assembly__inner">{renderNode(activeIndex)}</div>
-        </LayoutGroup>
-      </div>
+    <div className="assembly">
+      <LayoutGroup>
+        <div className="assembly__inner">{renderNode(activeIndex)}</div>
+      </LayoutGroup>
     </div>
   );
 }
